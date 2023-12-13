@@ -1,0 +1,15 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "pnpm prepare && nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview"
+  },
+  "devDependencies": {
+    "@nuxt/devtools-ui-kit": "^1.0.5",
+    "nuxt": "^3.8.2",
+    "unocss": "^0.58.0",
+    "vite-hot-client": "^0.2.3"
+  }
+}

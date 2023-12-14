@@ -47,6 +47,7 @@
     "flatted": "^3.2.9",
     "pathe": "^1.1.1",
     "perfect-debounce": "^1.0.0",
+    "scule": "^1.1.1",
     "sirv": "^2.0.3",
     "svgo": "^3.1.0",
     "vite-svg-loader": "^5.1.0"

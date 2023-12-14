@@ -2,7 +2,11 @@ import fsp from 'node:fs/promises'
 import { addVitePlugin, createResolver, defineNuxtModule } from '@nuxt/kit'
 import SvgLoader from 'vite-svg-loader'
 import type { Config } from 'svgo'
-import { setupRPC } from './rpc'
+import { extendServerRpc, onDevToolsInitialized } from '@nuxt/devtools-kit'
+import type { ClientFunctions, ServerFunctions, SvgFilesInfo } from './types'
+import { debounce } from 'perfect-debounce'
+import fg from 'fast-glob'
+import { basename } from 'pathe'
 
 interface SvgLoaderOptions {
   svgoConfig?: Config
@@ -60,7 +64,56 @@ export default defineNuxtModule<SvgLoaderOptions>({
         })
       })
 
-      addVitePlugin(setupRPC(nuxt))
+      onDevToolsInitialized(() => {
+        const serverFunctions = {} as ServerFunctions
+        const rpc = extendServerRpc<ClientFunctions, ServerFunctions>('NUXT_SVG_LOADER', serverFunctions)
+
+        let cache: SvgFilesInfo[] | null = null
+
+        const refreshDebounced = debounce(() => {
+          cache = null
+          rpc.broadcast.refresh.asEvent('getStaticSvgFiles')
+        }, 500)
+
+
+        nuxt.hook('builder:watch', (event) => {
+          if (event === 'add' || event === 'unlink')
+            refreshDebounced()
+        })
+
+        async function scan() {
+          if (cache)
+            return cache
+
+          const { srcDir } = nuxt.options
+
+          const files = await fg(['{assets,public}/**/*.svg'], {
+            cwd: srcDir,
+            onlyFiles: true,
+          })
+
+          cache = await Promise.all(
+            files.map(async (path) => {
+              const filePath = resolve(srcDir, path)
+              const stat = await fsp.lstat(filePath)
+
+              return {
+                path,
+                filePath,
+                name: basename(path),
+                size: stat.size,
+                mtime: stat.mtimeMs,
+              }
+            }),
+          )
+
+          return cache
+        }
+
+        serverFunctions.getStaticSvgFiles = async () => {
+          return await scan()
+        }
+      })
     }
   },
 })

@@ -1,4 +1,17 @@
 import type { AsyncDataOptions } from '#app'
+import { onDevtoolsClientConnected } from '@nuxt/devtools-kit/iframe-client'
+import type { ClientFunctions, ServerFunctions } from '../../src/types'
+import type { BirpcReturn } from 'birpc'
+
+let rpc: BirpcReturn<ServerFunctions, ClientFunctions>
+
+export const clientFunctions = {
+  // will be added in app.vue
+} as ClientFunctions
+
+onDevtoolsClientConnected((client) => {
+  rpc = client.devtools.extendClientRpc<ServerFunctions, ClientFunctions>('NUXT_SVG_LOADER', clientFunctions)
+})
 
 function useAsyncState<T>(key: string, fn: () => Promise<T>, options?: AsyncDataOptions<T>) {
   const nuxt = useNuxtApp()

@@ -3,12 +3,11 @@ import type { SvgFilesInfo } from '../src/types'
 
 const nuxt = useNuxtApp()
 
-Object.assign(clientFunctions, {
-  async refresh(type: string) {
-    // refresh useAsyncData
-    nuxt.hooks.callHookParallel('app:data:refresh', [type])
-  },
-})
+clientFunctions.refresh = async (type) => {
+  // refresh useAsyncData
+  await nuxt.hooks.callHookParallel('app:data:refresh', [type])
+}
+
 
 const files = useStaticSvgFiles()
 

@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.0.0",
   "packageManager": "pnpm@8.12.0",
-  "description": "Run multiple fetch with limited concurrency",
+  "description": "Nuxt module to load SVG files as Vue components, using SVGO for optimization.",
   "author": {
     "name": "Alex Liu <dsa1314@gmail.com>",
     "url": "https://github.com/Mini-ghost"
@@ -12,7 +12,9 @@
   "keywords": [
     "nuxt",
     "module",
-    "nuxt-module"
+    "nuxt-module",
+    "svgo",
+    "svg"
   ],
   "exports": {
     ".": {

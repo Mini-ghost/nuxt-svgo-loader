@@ -13,6 +13,16 @@ const files = useStaticSvgFiles()
 const selected = ref<SvgFilesInfo>()
 const navbar = ref<HTMLElement>()
 
+const search = ref('')
+
+const filtered = computed(() => {
+  const result = search.value
+    ? files.value?.filter(file => file.name.toLowerCase().includes(search.value.toLowerCase()))
+    : files.value
+
+  return result || []
+})
+
 useEventListener('keydown', (event) => {
   switch (event.key) {
     case 'Escape':
@@ -24,12 +34,10 @@ useEventListener('keydown', (event) => {
 
 <template>
   <div class="h-screen overflow-auto">
-    <NNavbar ref="navbar" class="border-gray/20 p-2">
-      <NIconTitle text="Nuxt Svg Loader" />
-    </NNavbar>
+    <NNavbar ref="navbar" v-model:search="search" class="border-gray/20 p-2" />
 
     <div class="grid grid-cols-minmax-8rem gap-1 p-2">
-      <template v-for="file in files" :key="file.path">
+      <template v-for="file in filtered" :key="file.path">
         <button type="button" class="flex flex-col items-center gap-1 p-2 rounded hover:bg-gray/5" :class="{ '!bg-green/10': selected === file }" @click="selected = file">
           <SvgPreview class="h-30 w-30" :src="`/__nuxt-svg-loader/svg/${file.path}`" :alt="file.name" />
           <span class="text-xs">{{ file.name }}</span>

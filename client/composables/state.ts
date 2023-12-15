@@ -1,7 +1,7 @@
-import type { AsyncDataOptions } from '#app'
 import { onDevtoolsClientConnected } from '@nuxt/devtools-kit/iframe-client'
-import type { ClientFunctions, ServerFunctions } from '../../src/types'
 import type { BirpcReturn } from 'birpc'
+import type { ClientFunctions, ServerFunctions } from '../../src/types'
+import type { AsyncDataOptions } from '#app'
 
 let rpc: BirpcReturn<ServerFunctions, ClientFunctions>
 

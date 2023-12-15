@@ -8,7 +8,6 @@ clientFunctions.refresh = async (type) => {
   await nuxt.hooks.callHookParallel('app:data:refresh', [type])
 }
 
-
 const files = useStaticSvgFiles()
 
 const selected = ref<SvgFilesInfo>()

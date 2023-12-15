@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-svg-loader-playground",
+  "name": "nuxt-svgo-loader-playground",
   "type": "module",
   "private": true,
   "scripts": {
@@ -8,6 +8,6 @@
     "generate": "nuxi generate"
   },
   "devDependencies": {
-    "nuxt-svg-loader": "latest"
+    "nuxt-svgo-loader": "latest"
   }
 }

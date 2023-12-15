@@ -39,7 +39,7 @@ useEventListener('keydown', (event) => {
     <div class="grid grid-cols-minmax-8rem gap-1 p-2">
       <template v-for="file in filtered" :key="file.path">
         <button type="button" class="flex flex-col items-center gap-1 p-2 rounded hover:bg-gray/5" :class="{ '!bg-green/10': selected === file }" @click="selected = file">
-          <SvgPreview class="h-30 w-30" :src="`/__nuxt-svg-loader/svg/${file.path}`" :alt="file.name" />
+          <SvgPreview class="h-30 w-30" :src="`/__nuxt-svgo-loader/svg/${file.path}`" :alt="file.name" />
           <span class="text-xs">{{ file.name }}</span>
         </button>
       </template>

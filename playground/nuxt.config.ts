@@ -1,7 +1,7 @@
 export default defineNuxtConfig({
-  modules: ['nuxt-svg-loader'],
+  modules: ['nuxt-svgo-loader'],
 
-  svgLoader: {
+  svgoLoader: {
     svgoConfig: {
       // Options here will be passed to svgo
     },

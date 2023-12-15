@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-svg-loader",
+  "name": "nuxt-svgo-loader",
   "type": "module",
   "version": "0.0.0",
   "packageManager": "pnpm@8.12.0",
@@ -63,6 +63,6 @@
     "typescript": "^5.3.3"
   },
   "resolutions": {
-    "nuxt-svg-loader": "link:."
+    "nuxt-svgo-loader": "link:."
   }
 }

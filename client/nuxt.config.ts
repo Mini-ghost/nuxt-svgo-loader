@@ -15,7 +15,7 @@ export default defineNuxtConfig({
     },
   },
   app: {
-    baseURL: '/__nuxt-svg-loader',
+    baseURL: '/__nuxt-svgo-loader',
   },
   experimental: {
     componentIslands: true,

@@ -1,1 +1,1 @@
-# Nuxt Svg Loader
+# Nuxt Svgo Loader

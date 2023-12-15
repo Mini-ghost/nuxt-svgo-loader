@@ -31,7 +31,7 @@ function onCopy(mode: 'component' | 'skipsvgo' | 'raw') {
       <div class="h-px w-full bg-gray/15" />
     </div>
 
-    <SvgPreview class="max-h-80 min-h-20 min-w-20 w-auto" :src="`/__nuxt-svg-loader/svg/${selected.path}`" :alt="selected.name" />
+    <SvgPreview class="max-h-80 min-h-20 min-w-20 w-auto" :src="`/__nuxt-svgo-loader/svg/${selected.path}`" :alt="selected.name" />
 
     <div class="flex gap-2 items-center -mb-2 opacity-50">
       <div class="h-px w-full bg-gray/15" />

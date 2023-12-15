@@ -14,12 +14,12 @@ interface SvgLoaderOptions {
   defaultImport?: 'url' | 'raw' | 'component'
 }
 
-const DEVTOOLS_CLIENT_PATH = '/__nuxt-svg-loader'
+const DEVTOOLS_CLIENT_PATH = '/__nuxt-svgo-loader'
 
 export default defineNuxtModule<SvgLoaderOptions>({
   meta: {
-    name: 'nuxt-svg-loader',
-    configKey: 'svgLoader',
+    name: 'nuxt-svgo-loader',
+    configKey: 'svgoLoader',
   },
   async setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
@@ -40,7 +40,7 @@ export default defineNuxtModule<SvgLoaderOptions>({
           }),
         )
 
-        server.middlewares.use(`${'/__nuxt-svg-loader'}/svg`, async (req, res, next) => {
+        server.middlewares.use(`${'/__nuxt-svgo-loader'}/svg`, async (req, res, next) => {
           if (!req.url)
             return next()
 
@@ -60,7 +60,7 @@ export default defineNuxtModule<SvgLoaderOptions>({
       nuxt.hook('devtools:customTabs', (tabs) => {
         tabs.push({
           title: 'Nuxt SVG Loader',
-          name: 'nuxt-svg-loader',
+          name: 'nuxt-svgo-loader',
           view: {
             type: 'iframe',
             src: DEVTOOLS_CLIENT_PATH,
@@ -70,7 +70,7 @@ export default defineNuxtModule<SvgLoaderOptions>({
 
       onDevToolsInitialized(() => {
         const serverFunctions = {} as ServerFunctions
-        const rpc = extendServerRpc<ClientFunctions, ServerFunctions>('NUXT_SVG_LOADER', serverFunctions)
+        const rpc = extendServerRpc<ClientFunctions, ServerFunctions>('NUXT_SVGO_LOADER', serverFunctions)
 
         let cache: SvgFilesInfo[] | null = null
 

@@ -10,7 +10,7 @@ export const clientFunctions = {
 } as ClientFunctions
 
 onDevtoolsClientConnected((client) => {
-  rpc = client.devtools.extendClientRpc<ServerFunctions, ClientFunctions>('NUXT_SVG_LOADER', clientFunctions)
+  rpc = client.devtools.extendClientRpc<ServerFunctions, ClientFunctions>('NUXT_SVGO_LOADER', clientFunctions)
 })
 
 function useAsyncState<T>(key: string, fn: () => Promise<T>, options?: AsyncDataOptions<T>) {

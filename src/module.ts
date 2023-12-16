@@ -88,9 +88,10 @@ export default defineNuxtModule<SvgLoaderOptions>({
           if (cache)
             return cache
 
-          const files = await fg(['{assets,public}/**/*.svg'], {
+          const files = await fg(['**/*.svg'], {
             cwd: srcDir,
             onlyFiles: true,
+            ignore: ['**/node_modules/**', '**/dist/**'],
           })
 
           cache = await Promise.all(

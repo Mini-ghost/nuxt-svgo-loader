@@ -9,6 +9,14 @@
     "url": "https://github.com/Mini-ghost"
   },
   "license": "MIT",
+  "homepage": "https://github.com/Mini-ghost/nuxt-svgo-loader#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mini-ghost/nuxt-svgo-loader.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Mini-ghost/nuxt-svgo-loader/issues"
+  },
   "keywords": [
     "nuxt",
     "module",

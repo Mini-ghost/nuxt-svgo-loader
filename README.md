@@ -40,7 +40,9 @@ export default defineNuxtConfig({
 
 This module adds a new tab to the Nuxt DevTools, which allows you to inspect the SVG files.
 
-![DevTools](./.github/assets/devtools.png)
+<p align='center'>
+<img src='https://raw.githubusercontent.com/Mini-ghost/nuxt-svgo-loader/main/.github/assets/devtools.png' width='800'/>
+</p>
 
 ## License
 

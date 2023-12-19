@@ -40,6 +40,10 @@ export default defineNuxtConfig({
     }),
   ],
 
+  devtools: {
+    enabled: true,
+  },
+
   svgoLoader: {
     svgoConfig: {
       // Options here will be passed to svgo

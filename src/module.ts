@@ -1,4 +1,6 @@
 import fsp from 'node:fs/promises'
+import { existsSync } from 'node:fs'
+
 import { addVitePlugin, createResolver, defineNuxtModule } from '@nuxt/kit'
 import SvgLoader from 'vite-svg-loader'
 import type { Config } from 'svgo'
@@ -15,6 +17,7 @@ interface SvgLoaderOptions {
 }
 
 const DEVTOOLS_CLIENT_PATH = '/__nuxt-svgo-loader'
+const DEVTOOLS_CLIENT_PORT = 3030
 
 export default defineNuxtModule<SvgLoaderOptions>({
   meta: {
@@ -29,33 +32,68 @@ export default defineNuxtModule<SvgLoaderOptions>({
     addVitePlugin(SvgLoader(options))
 
     if (nuxt.options.dev) {
-      nuxt.hook('vite:serverCreated', async (server) => {
-        const sirv = await import('sirv').then(r => r.default || r)
+      const clientPath = resolve('./client')
+      const isProductionBuild = existsSync(clientPath)
 
-        server.middlewares.use(
-          DEVTOOLS_CLIENT_PATH,
-          sirv(resolve('./client'), {
-            single: true,
-            dev: true,
-          }),
-        )
+      if (isProductionBuild) {
+        nuxt.hook('vite:serverCreated', async (server) => {
+          const sirv = await import('sirv').then(r => r.default || r)
 
-        server.middlewares.use(`${'/__nuxt-svgo-loader'}/svg`, async (req, res, next) => {
-          if (!req.url)
-            return next()
+          server.middlewares.use(
+            DEVTOOLS_CLIENT_PATH,
+            sirv(resolve('./client'), {
+              single: true,
+              dev: true,
+            }),
+          )
 
-          if (req.url.endsWith('.svg')) {
-            try {
-              res.setHeader('Content-Type', 'image/svg+xml')
-              res.end(await fsp.readFile(resolve(srcDir, req.url.slice(1)), 'utf-8'))
-              return
+          server.middlewares.use(`${DEVTOOLS_CLIENT_PATH}/svg`, async (req, res, next) => {
+            if (!req.url)
+              return next()
+
+            if (req.url.endsWith('.svg')) {
+              try {
+                res.setHeader('Content-Type', 'image/svg+xml')
+                res.end(await fsp.readFile(resolve(srcDir, req.url.slice(1)), 'utf-8'))
+                return
+              }
+              catch (e) {}
             }
-            catch (e) {}
+
+            next()
+          })
+        })
+      }
+      else {
+        nuxt.hook('vite:extendConfig', (config) => {
+          config.server = config.server || {}
+          config.server.proxy = config.server.proxy || {}
+
+          config.server.proxy[`^${DEVTOOLS_CLIENT_PATH}/svg/.*`] = {
+            target: `http://localhost:${DEVTOOLS_CLIENT_PORT}${DEVTOOLS_CLIENT_PATH}`,
+            changeOrigin: true,
+            followRedirects: true,
+            configure(proxy) {
+              proxy.on('proxyReq', async (_proxyReq, req, res) => {
+                if (!req.url)
+                  return
+
+                const path = req.url.slice(`${DEVTOOLS_CLIENT_PATH}/svg/`.length) ?? ''
+
+                res.setHeader('Content-Type', 'image/svg+xml')
+                res.end(await fsp.readFile(resolve(srcDir, path), 'utf-8'))
+              })
+            },
           }
 
-          next()
+          config.server.proxy[DEVTOOLS_CLIENT_PATH] = {
+            target: `http://localhost:${DEVTOOLS_CLIENT_PORT}${DEVTOOLS_CLIENT_PATH}`,
+            changeOrigin: true,
+            followRedirects: true,
+            rewrite: path => path.replace(DEVTOOLS_CLIENT_PATH, ''),
+          }
         })
-      })
+      }
 
       nuxt.hook('devtools:customTabs', (tabs) => {
         tabs.push({

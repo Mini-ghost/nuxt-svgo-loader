@@ -36,6 +36,35 @@ export default defineNuxtConfig({
 > [!NOTE]
 > Since `nuxt-svgo-loader` is a Nuxt module based on `vite-svg-loader`, the configuration for `svgoLoader` remains identical to that of `vite-svg-loader`. You can refer to the documentation of `vite-svg-loader` for the available options [here](https://github.com/jpkleemans/vite-svg-loader?tab=readme-ov-file#vite-svg-loader).
 
+## Usage
+
+### Component
+
+SVGs can be explicitly imported as Vue components using the `?component` suffix:
+
+```ts
+import NuxtSvg from '~/assets/svg/nuxt.svg'
+// <NuxtSvg />
+```
+
+### URL
+
+SVGs can be imported as URLs using the `?url` suffix:
+
+```ts
+import nuxtSvgUrl from '~/assets/svg/nuxt.svg?url'
+// nuxtSvgUrl === '/_nuxt/assets/svg/nuxt.svg'
+```
+
+### Raw
+
+SVGs can be imported as raw strings using the `?raw` suffix:
+
+```ts
+import nuxtSvgRaw from '~/assets/svg/nuxt.svg?raw'
+// nuxtSvgRaw === '<svg xmlns="http://www.w3.org/2000/svg" ...'
+```
+
 ## DevTools
 
 This module adds a new tab to the Nuxt DevTools, which allows you to inspect the SVG files.

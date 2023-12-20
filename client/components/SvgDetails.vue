@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { join } from 'pathe'
 import { genImport, genSafeVariableName } from 'knitwork'
-import { pascalCase } from 'scule'
+import { camelCase, pascalCase } from 'scule'
 import type { SvgFilesInfo } from '../../src/types'
+
+type LoaderMode = 'component' | 'skipsvgo' | 'raw' | 'url'
 
 const props = defineProps<{
   selected: SvgFilesInfo
@@ -12,11 +14,17 @@ const clipboard = useClipboard()
 
 const basicPath = computed(() => join('~', props.selected.path))
 
-function genImportPath(mode: 'component' | 'skipsvgo' | 'raw') {
-  return genImport(`${basicPath.value}?${mode}`, pascalCase(genSafeVariableName(props.selected.name).replace(/_(45|46|47)/g, '_')))
+function genImportPath(mode: LoaderMode) {
+  const safeVariableName = genSafeVariableName(props.selected.name).replace(/_(45|46|47)/g, '_')
+  const importPath = `${basicPath.value}?${mode}`
+
+  if (mode === 'component' || mode === 'skipsvgo')
+    return genImport(importPath, pascalCase(safeVariableName))
+
+  return genImport(importPath, camelCase(`${safeVariableName}_${mode}`))
 }
 
-function onCopy(mode: 'component' | 'skipsvgo' | 'raw') {
+function onCopy(mode: LoaderMode) {
   clipboard.copy(genImportPath(mode))
 }
 </script>
@@ -83,6 +91,19 @@ function onCopy(mode: 'component' | 'skipsvgo' | 'raw') {
                 {{ basicPath }}?raw
               </div>
               <NButton icon="carbon-copy" :border="false" @click="onCopy('raw')" />
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-end pe-5 opacity-50">
+            Url
+          </td>
+          <td class="font-mono truncate white-space-pre">
+            <div class="flex gap-1">
+              <div class="flex-auto ws-pre of-hidden truncate">
+                {{ basicPath }}?url
+              </div>
+              <NButton icon="carbon-copy" :border="false" @click="onCopy('url')" />
             </div>
           </td>
         </tr>

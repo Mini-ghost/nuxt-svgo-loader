@@ -1,7 +1,7 @@
 import fsp from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 
-import { addVitePlugin, createResolver, defineNuxtModule } from '@nuxt/kit'
+import { addTemplate, addVitePlugin, createResolver, defineNuxtModule } from '@nuxt/kit'
 import SvgLoader from 'vite-svg-loader'
 import type { Config } from 'svgo'
 import { extendServerRpc, onDevToolsInitialized } from '@nuxt/devtools-kit'
@@ -30,6 +30,38 @@ export default defineNuxtModule<SvgLoaderOptions>({
     const { srcDir } = nuxt.options
 
     addVitePlugin(SvgLoader(options))
+
+    addTemplate({
+      filename: 'nuxt-svgo-loader.d.ts',
+      getContents() {
+        return `declare module '*.svg?component' {
+  import { FunctionalComponent, SVGAttributes } from 'vue'
+  const src: FunctionalComponent<SVGAttributes>
+  export default src
+}
+
+declare module '*.svg?url' {
+  const src: string
+  export default src
+}
+
+declare module '*.svg?raw' {
+  const src: string
+  export default src
+}
+
+declare module '*.svg?skipsvgo' {
+  import { FunctionalComponent, SVGAttributes } from 'vue'
+  const src: FunctionalComponent<SVGAttributes>
+  export default src
+}
+`
+      },
+    })
+
+    nuxt.hook('prepare:types', ({ tsConfig }) => {
+      tsConfig.include?.push('./nuxt-svgo-loader.d.ts')
+    })
 
     if (nuxt.options.dev) {
       const clientPath = resolve('./client')

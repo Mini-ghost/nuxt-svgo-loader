@@ -65,12 +65,21 @@ import nuxtSvgRaw from '~/assets/svg/nuxt.svg?raw'
 // nuxtSvgRaw === '<svg xmlns="http://www.w3.org/2000/svg" ...'
 ```
 
+### Skip SVGO for a single file
+
+SVGO can be explicitly disabled for one file by adding the `?skipsvgo` suffix:
+
+```ts
+import NuxtSvgWithoutOptimizer from '~/assets/svg/nuxt.svg?skipsvgo'
+// <NuxtSvgWithoutOptimizer />
+```
+
 ## DevTools
 
 This module adds a new tab to the Nuxt DevTools, which allows you to inspect the SVG files.
 
 <p align='center'>
-<img src='https://raw.githubusercontent.com/Mini-ghost/nuxt-svgo-loader/main/.github/assets/devtools.png' width='800'/>
+<img src='https://raw.githubusercontent.com/Mini-ghost/nuxt-svgo-loader/main/.github/assets/devtools.png' width='100%'/>
 </p>
 
 ## License

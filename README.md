@@ -18,10 +18,7 @@ Nuxt module to load SVG files as Vue components, using SVGO for optimization.
 Install and add nuxt-svgo-loader to your nuxt.config.
 
 ```bash
-# Whichever matches your package manager
-pnpm add -D nuxt-svgo-loader
-npm install -D nuxt-svgo-loader
-yarn add -D nuxt-svgo-loader
+npx nuxi@latest module add nuxt-svgo-loader
 ```
 
 ```ts

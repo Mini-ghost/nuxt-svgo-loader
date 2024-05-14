@@ -14,17 +14,18 @@ const clipboard = useClipboard()
 
 const basicPath = computed(() => join('~', props.selected.path))
 
-function genImportPath(mode: LoaderMode) {
+function genImportPath(mode?: LoaderMode) {
+
   const safeVariableName = genSafeVariableName(props.selected.name).replace(/_(45|46|47)/g, '_')
-  const importPath = `${basicPath.value}?${mode}`
+  const importPath = `${basicPath.value}${mode ? '?' + mode : ''}`
 
   if (mode === 'component' || mode === 'skipsvgo')
     return genImport(importPath, pascalCase(safeVariableName))
 
-  return genImport(importPath, camelCase(`${safeVariableName}_${mode}`))
+  return genImport(importPath, camelCase(`${safeVariableName}${mode ? '_' + mode : ''}`))
 }
 
-function onCopy(mode: LoaderMode) {
+function onCopy(mode?: LoaderMode) {
   clipboard.copy(genImportPath(mode))
 }
 </script>
@@ -55,6 +56,19 @@ function onCopy(mode: LoaderMode) {
         <col class="w-full">
       </colgroup>
       <tbody>
+        <tr>
+          <td class="text-end pe-5 opacity-50">
+            Path
+          </td>
+          <td class="font-mono truncate white-space-pre">
+            <div class="flex gap-1">
+              <div class="flex-auto ws-pre of-hidden truncate">
+                {{ basicPath }}
+              </div>
+              <NButton icon="carbon-copy" :border="false" @click="onCopy()" />
+            </div>
+          </td>
+        </tr>
         <tr>
           <td class="text-end pe-5 opacity-50">
             Component

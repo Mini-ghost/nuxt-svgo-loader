@@ -40,7 +40,9 @@ function onCopy(mode?: LoaderMode) {
       <div class="h-px w-full bg-gray/15" />
     </div>
 
-    <SvgPreview class="max-h-80 min-h-20 min-w-20 w-auto" :src="`/__nuxt-svgo-loader/svg/${selected.path}`" :alt="selected.name" />
+    <div class="flex items-center justify-center">
+      <SvgPreview class="max-h-80 min-h-20 min-w-20 w-auto" :src="`/__nuxt-svgo-loader/svg/${selected.path}`" :alt="selected.name" />
+    </div>
 
     <div class="flex gap-2 items-center -mb-2 opacity-50">
       <div class="h-px w-full bg-gray/15" />

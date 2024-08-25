@@ -89,7 +89,7 @@ This module adds a new tab to the Nuxt DevTools, which allows you to inspect the
 [npm-version-href]: https://npmjs.com/package/nuxt-svgo-loader
 [npm-downloads-src]: https://img.shields.io/npm/dt/nuxt-svgo-loader?style=flat&colorA=18181B&colorB=28CF8D
 [npm-downloads-href]: https://npmjs.com/package/nuxt-svgo-loader
-[license-src]: https://img.shields.io/npm/l/@nuxtjs/color-mode.svg?style=flat&colorA=18181B&colorB=28CF8D
-[license-href]: https://npmjs.com/package/@nuxtjs/color-mode
+[license-src]: https://img.shields.io/npm/l/nuxt-svgo-loader.svg?style=flat&colorA=18181B&colorB=28CF8D
+[license-href]: https://npmjs.com/package/nuxt-svgo-loader
 [nuxt-src]: https://img.shields.io/badge/Nuxt-18181B?logo=nuxt.js
 [nuxt-href]: https://nuxt.com

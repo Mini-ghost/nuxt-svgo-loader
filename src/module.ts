@@ -6,7 +6,7 @@ import SvgLoader from 'vite-svg-loader'
 import type { Config } from 'svgo'
 import { extendServerRpc, onDevToolsInitialized } from '@nuxt/devtools-kit'
 import { debounce } from 'perfect-debounce'
-import fg from 'fast-glob'
+import { glob } from 'tinyglobby'
 import { basename } from 'pathe'
 import type { ClientFunctions, ServerFunctions, SvgFilesInfo } from './types'
 
@@ -158,7 +158,7 @@ declare module '*.svg?skipsvgo' {
           if (cache)
             return cache
 
-          const files = await fg(['**/*.svg'], {
+          const files = await glob(['**/*.svg'], {
             cwd: srcDir,
             onlyFiles: true,
             ignore: ['**/node_modules/**', '**/dist/**'],

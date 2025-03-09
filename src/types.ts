@@ -7,11 +7,11 @@ export interface SvgFilesInfo {
 }
 
 export interface ServerFunctions {
-  getStaticSvgFiles(): Promise<SvgFilesInfo[]>
+  getStaticSvgFiles: () => Promise<SvgFilesInfo[]>
 }
 
 export interface ClientFunctions {
-  refresh(event: ClientUpdateEvent): void
+  refresh: (event: ClientUpdateEvent) => void
 }
 
 export type ClientUpdateEvent = keyof ServerFunctions

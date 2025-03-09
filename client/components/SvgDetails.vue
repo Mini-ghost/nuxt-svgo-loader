@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { join } from 'pathe'
-import { genImport, genSafeVariableName } from 'knitwork'
-import { camelCase, pascalCase } from 'scule'
 import type { SvgFilesInfo } from '../../src/types'
+import { genImport, genSafeVariableName } from 'knitwork'
+import { join } from 'pathe'
+import { camelCase, pascalCase } from 'scule'
 
 type LoaderMode = 'component' | 'skipsvgo' | 'raw' | 'url'
 
@@ -15,14 +15,13 @@ const clipboard = useClipboard()
 const basicPath = computed(() => join('~', props.selected.path))
 
 function genImportPath(mode?: LoaderMode) {
-
   const safeVariableName = genSafeVariableName(props.selected.name).replace(/_(45|46|47)/g, '_')
-  const importPath = `${basicPath.value}${mode ? '?' + mode : ''}`
+  const importPath = `${basicPath.value}${mode ? `?${mode}` : ''}`
 
   if (mode === 'component' || mode === 'skipsvgo')
     return genImport(importPath, pascalCase(safeVariableName))
 
-  return genImport(importPath, camelCase(`${safeVariableName}${mode ? '_' + mode : ''}`))
+  return genImport(importPath, camelCase(`${safeVariableName}${mode ? `_${mode}` : ''}`))
 }
 
 function onCopy(mode?: LoaderMode) {

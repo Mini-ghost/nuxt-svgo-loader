@@ -1,14 +1,14 @@
-import fsp from 'node:fs/promises'
-import { existsSync } from 'node:fs'
-
-import { addTemplate, addVitePlugin, createResolver, defineNuxtModule } from '@nuxt/kit'
-import SvgLoader from 'vite-svg-loader'
 import type { Config } from 'svgo'
+import type { ClientFunctions, ServerFunctions, SvgFilesInfo } from './types'
+
+import { existsSync } from 'node:fs'
+import fsp from 'node:fs/promises'
 import { extendServerRpc, onDevToolsInitialized } from '@nuxt/devtools-kit'
+import { addTemplate, addVitePlugin, createResolver, defineNuxtModule } from '@nuxt/kit'
+import { basename } from 'pathe'
 import { debounce } from 'perfect-debounce'
 import { glob } from 'tinyglobby'
-import { basename } from 'pathe'
-import type { ClientFunctions, ServerFunctions, SvgFilesInfo } from './types'
+import SvgLoader from 'vite-svg-loader'
 
 interface SvgLoaderOptions {
   svgoConfig?: Config
@@ -89,7 +89,7 @@ declare module '*.svg?skipsvgo' {
                 res.end(await fsp.readFile(resolve(srcDir, req.url.slice(1)), 'utf-8'))
                 return
               }
-              catch (e) {}
+              catch {}
             }
 
             next()

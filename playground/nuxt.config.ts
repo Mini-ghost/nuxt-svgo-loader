@@ -1,7 +1,7 @@
 import { resolve } from 'node:path'
 import process from 'node:process'
-import { defineNuxtModule } from '@nuxt/kit'
 import { startSubprocess } from '@nuxt/devtools-kit'
+import { defineNuxtModule } from '@nuxt/kit'
 import NuxtSvgoLoader from '../src/module'
 
 export default defineNuxtConfig({
@@ -29,7 +29,6 @@ export default defineNuxtConfig({
           },
         )
         subprocess.getProcess().stdout?.on('data', (data) => {
-          // eslint-disable-next-line no-console
           console.log(` sub: ${data.toString()}`)
         })
 

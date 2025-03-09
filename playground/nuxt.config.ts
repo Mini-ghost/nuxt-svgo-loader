@@ -5,6 +5,8 @@ import { defineNuxtModule } from '@nuxt/kit'
 import NuxtSvgoLoader from '../src/module'
 
 export default defineNuxtConfig({
+  compatibilityDate: '2025-03-09',
+
   modules: [
     NuxtSvgoLoader,
 

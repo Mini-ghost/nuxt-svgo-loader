@@ -98,9 +98,8 @@ declare module '*.svg?skipsvgo' {
       }
       else {
         nuxt.hook('vite:extendConfig', (config) => {
-          config.server = config.server || {}
-          config.server.proxy = config.server.proxy || {}
-
+          config.server ||= {}
+          config.server.proxy ||= {}
           config.server.proxy[`^${DEVTOOLS_CLIENT_PATH}/svg/.*`] = {
             target: `http://localhost:${DEVTOOLS_CLIENT_PORT}${DEVTOOLS_CLIENT_PATH}`,
             changeOrigin: true,

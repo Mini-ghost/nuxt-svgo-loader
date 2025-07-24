@@ -70,7 +70,10 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.1.2",
     "nuxt": "^4.0.1",
-    "typescript": "^5.8.3"
+    "oxc-walker": "^0.4.0",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3",
+    "ultrahtml": "^1.6.0"
   },
   "resolutions": {
     "nuxt-svgo-loader": "link:."

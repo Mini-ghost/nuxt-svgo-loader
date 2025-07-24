@@ -17,6 +17,9 @@ export default defineNuxtConfig({
   app: {
     baseURL: '/__nuxt-svgo-loader',
   },
+  future: {
+    compatibilityVersion: 4,
+  },
   experimental: {
     componentIslands: true,
   },

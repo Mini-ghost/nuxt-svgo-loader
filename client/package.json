@@ -7,9 +7,9 @@
     "preview": "nuxt preview"
   },
   "devDependencies": {
-    "@nuxt/devtools-ui-kit": "^1.0.5",
-    "nuxt": "^3.8.2",
-    "unocss": "^0.58.0",
-    "vite-hot-client": "^0.2.3"
+    "@nuxt/devtools-ui-kit": "^2.6.2",
+    "nuxt": "^4.0.1",
+    "unocss": "^66.3.3",
+    "vite-hot-client": "^2.1.0"
   }
 }

@@ -1,6 +1,7 @@
 import type { ComponentsOptions } from 'nuxt/schema'
 
 import { pathToFileURL } from 'node:url'
+import { genImport } from 'knitwork'
 import MagicString from 'magic-string'
 import { parseAndWalk, ScopeTracker } from 'oxc-walker'
 import { camelCase, pascalCase } from 'scule'
@@ -9,15 +10,16 @@ import { parse, render, walk } from 'ultrahtml'
 import { createUnplugin } from 'unplugin'
 
 interface LoaderOptions {
+  getComponents: () => { path: string, filePath: string, name: string }[]
   transform?: ComponentsOptions['transform']
 }
 
 const SCRIPT_RE = /(?<=<script[^>]*>)[\s\S]*?(?=<\/script>)/gi
 const TEMPLATE_RE = /<template>([\s\S]*)<\/template>/
+const SVGO_ICON_RE = /\b(?:svgo-icon|SvgoIcon)\b/g
+const SVGO_ICON_RESOLVE_RE = /(?<=[ (])_?resolveComponent\(\s*["'](SvgoIcon[^'"]*)["'][^)]*\)/g
 
-const SVGO_ICON_REGEX = /(?<=[ (])_?resolveComponent\(\s*["'](SvgoIcon[^'"]*)["'][^)]*\)/g
-
-export function SvgoIconResolver(options: LoaderOptions = {}) {
+export function SvgoIconTransform(options: LoaderOptions) {
   return createUnplugin(() => {
     const exclude = options.transform?.exclude || []
     const include = options.transform?.include || []
@@ -26,7 +28,7 @@ export function SvgoIconResolver(options: LoaderOptions = {}) {
 
     return [
       {
-        name: 'nuxt-svgo-loader:components',
+        name: 'nuxt-svgo-loader:transform',
         enforce: 'pre',
         transformInclude(id) {
           if (exclude.some(pattern => pattern.test(id))) {
@@ -44,8 +46,8 @@ export function SvgoIconResolver(options: LoaderOptions = {}) {
           },
 
           async handler(code, id) {
-            // Skip if the file does not include SvgoIcon
-            if (!code.includes('SvgoIcon')) {
+            // skip if the file does not include SvgoIcon or svgo-icon
+            if (!SVGO_ICON_RE.test(code)) {
               return null
             }
 
@@ -68,16 +70,19 @@ export function SvgoIconResolver(options: LoaderOptions = {}) {
 
             const s = new MagicString(code)
 
-            const imports: string[] = []
+            const imports = new Set<string>()
 
             try {
+              const components = options.getComponents()
+              const lookup = new Map(components.map(c => [c.name, c]))
+
               const ast = parse(template)
               await walk(ast, async (node) => {
                 if (node.type !== 1 /* ELEMENT_NODE */) {
                   return
                 }
 
-                if (node.name !== 'SvgoIcon') {
+                if (node.name !== 'SvgoIcon' && node.name !== 'svgo-icon') {
                   return
                 }
 
@@ -90,13 +95,21 @@ export function SvgoIconResolver(options: LoaderOptions = {}) {
                 const end = node.loc.at(-1)!.end + offset
 
                 if (!name) {
+                  // missing name
                   s.remove(start, end)
                   return
                 }
 
                 const component = `SvgoIcon${pascalCase(camelCase(name))}`
+                const file = lookup.get(`${name}.svg`)
 
-                imports.push(`import ${component} from '~/assets/svg/${name}.svg?component'`)
+                if (!file) {
+                  // file not found
+                  s.remove(start, end)
+                  return
+                }
+
+                imports.add(genImport(`${file.filePath}?component`, component))
 
                 const cloned = { ...node }
                 cloned.name = component
@@ -113,8 +126,8 @@ export function SvgoIconResolver(options: LoaderOptions = {}) {
               // ignore errors if it's not html-like
             }
 
-            if (imports.length) {
-              bucket.set(id, imports.join('\n'))
+            if (imports.size) {
+              bucket.set(id, [...imports].join('\n'))
             }
 
             if (s.hasChanged()) {
@@ -127,7 +140,7 @@ export function SvgoIconResolver(options: LoaderOptions = {}) {
         },
       },
       {
-        name: 'nuxt-svgo-loader:resolve',
+        name: 'nuxt-svgo-loader:loader',
         transformInclude(id) {
           if (exclude.some(pattern => pattern.test(id))) {
             return false
@@ -149,7 +162,7 @@ export function SvgoIconResolver(options: LoaderOptions = {}) {
 
             if (imports) {
               s.prepend(`${imports}\n`)
-              s.replace(SVGO_ICON_REGEX, (_, name) => name)
+              s.replace(SVGO_ICON_RESOLVE_RE, (_, name) => name)
             }
 
             return {

@@ -3,7 +3,8 @@ import type { Config } from 'svgo'
 import { addBuildPlugin, addTemplate, addVitePlugin, createResolver, defineNuxtModule } from '@nuxt/kit'
 import SvgLoader from 'vite-svg-loader'
 import { devtools } from './devtools'
-import { SvgoIconResolver } from './plugins/svgo-icon-resolver'
+import { SvgoIconTransform } from './plugins/svgo-icon-transform'
+import { scanComponents } from './scan'
 
 interface SvgLoaderOptions {
   svgoConfig?: Config
@@ -49,8 +50,17 @@ export default defineNuxtModule<SvgLoaderOptions>({
       getContents: () => DTS,
     })
 
+    const context = {
+      components: [] as Awaited<ReturnType<typeof scanComponents>>,
+    }
+
+    function getComponents() {
+      return context.components
+    }
+
     addBuildPlugin(
-      SvgoIconResolver({
+      SvgoIconTransform({
+        getComponents,
         transform:
           typeof nuxt.options.components === 'object'
           && !Array.isArray(nuxt.options.components)
@@ -59,8 +69,26 @@ export default defineNuxtModule<SvgLoaderOptions>({
       }),
     )
 
+    addTemplate({
+      filename: 'svgo-icon.d.ts',
+      getContents: () => {
+        const names = getComponents().map(component => `'${component.name.replace('.svg', '')}'`)
+        return `import { FunctionalComponent, SVGAttributes } from 'vue'
+declare module 'vue' {
+  export interface GlobalComponents {
+    SvgoIcon: FunctionalComponent<SVGAttributes & { name: ${names.join(' | ')} }>
+  }
+}`
+      },
+    })
+
+    nuxt.hook('app:templates', async () => {
+      context.components = await scanComponents(nuxt, resolve)
+    })
+
     nuxt.hook('prepare:types', ({ tsConfig }) => {
       tsConfig.include?.push('./nuxt-svgo-loader.d.ts')
+      tsConfig.include?.push('./svgo-icon.d.ts')
     })
 
     if (nuxt.options.dev) {

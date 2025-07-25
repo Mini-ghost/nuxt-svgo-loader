@@ -63,6 +63,9 @@ importers:
       husky:
         specifier: ^9.1.7
         version: 9.1.7
+      knitwork:
+        specifier: ^1.2.0
+        version: 1.2.0
       lint-staged:
         specifier: ^16.1.2
         version: 16.1.2

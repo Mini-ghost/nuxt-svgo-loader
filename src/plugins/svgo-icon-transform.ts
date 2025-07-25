@@ -91,6 +91,7 @@ export function SvgoIconTransform(options: LoaderOptions) {
                 }
 
                 const name = node.attributes.name
+                const strategy = node.attributes.strategy || 'component'
                 const start = node.loc[0].start + offset
                 const end = node.loc.at(-1)!.end + offset
 
@@ -100,7 +101,7 @@ export function SvgoIconTransform(options: LoaderOptions) {
                   return
                 }
 
-                const component = `SvgoIcon${pascalCase(camelCase(name))}`
+                const component = `SvgoIcon${pascalCase(strategy)}${pascalCase(camelCase(name))}`
                 const file = lookup.get(`${name}.svg`)
 
                 if (!file) {
@@ -109,13 +110,14 @@ export function SvgoIconTransform(options: LoaderOptions) {
                   return
                 }
 
-                imports.add(genImport(`${file.filePath}?component`, component))
+                imports.add(genImport(`${file.filePath}?${strategy}`, `__${component}`))
 
                 const cloned = { ...node }
                 cloned.name = component
 
                 const attributes = { ...node.attributes }
                 delete attributes.name
+                delete attributes.strategy
 
                 cloned.attributes = attributes
 
@@ -162,7 +164,7 @@ export function SvgoIconTransform(options: LoaderOptions) {
 
             if (imports) {
               s.prepend(`${imports}\n`)
-              s.replace(SVGO_ICON_RESOLVE_RE, (_, name) => name)
+              s.replace(SVGO_ICON_RESOLVE_RE, (_, name) => `__${name}`)
             }
 
             return {

@@ -35,6 +35,70 @@ declare module '*.svg?skipsvgo' {
 }
 `
 
+function generateSvgoIconDts(names: string[]) {
+  return `import { FunctionalComponent, SVGAttributes } from 'vue'
+
+interface SvgoIconProps {
+  /**
+   * The name of the SVG icon to render
+   *
+   * @description This should match the filename (without extension) of an SVG file
+   * in your configured icons directory. The available names are type-checked
+   * based on the SVG files found during build time.
+   */
+  name: ${names.join(' | ')}
+
+  /**
+   * The imported strategy for the SVG icon
+   *
+   * @description
+   * - \`'component'\`: Process the SVG through SVGO optimization and render as Vue component (default)
+   * - \`'skipsvgo'\`: Skip SVGO optimization and render the raw SVG as Vue component
+   *
+   * @default 'component'
+   *
+   * @example
+   * \`\`\`vue
+   * <!-- Optimized SVG (default) -->
+   * <SvgoIcon name="my-icon" />
+   * <SvgoIcon name="my-icon" strategy="component" />
+   *
+   * <!-- Raw SVG without optimization -->
+   * <SvgoIcon name="my-icon" strategy="skipsvgo" />
+   * \`\`\`
+   */
+  strategy?: 'component' | 'skipsvgo'
+}
+
+declare module 'vue' {
+  export interface GlobalComponents {
+    /**
+     * A Vue virtual component that is used to replace with the specified SVG component at build-time
+     *
+     * @example
+     * \`\`\`vue
+     * <template>
+     *   <!-- Basic usage -->
+     *   <SvgoIcon name="home" />
+     *
+     *   <!-- With SVG attributes -->
+     *   <SvgoIcon
+     *     aria-label="User profile"
+     *     class="size-6"
+     *     fill="currentColor"
+     *     name="user"
+     *   />
+     *
+     *   <!-- Skip optimization -->
+     *   <SvgoIcon name="complex-logo" strategy="skipsvgo" />
+     * </template>
+     * \`\`\`
+     */
+    SvgoIcon: FunctionalComponent<SVGAttributes & SvgoIconProps>
+  }
+}`
+}
+
 export default defineNuxtModule<SvgLoaderOptions>({
   meta: {
     name: 'nuxt-svgo-loader',
@@ -73,12 +137,7 @@ export default defineNuxtModule<SvgLoaderOptions>({
       filename: 'svgo-icon.d.ts',
       getContents: () => {
         const names = getComponents().map(component => `'${component.name.replace('.svg', '')}'`)
-        return `import { FunctionalComponent, SVGAttributes } from 'vue'
-declare module 'vue' {
-  export interface GlobalComponents {
-    SvgoIcon: FunctionalComponent<SVGAttributes & { name: ${names.join(' | ')} }>
-  }
-}`
+        return generateSvgoIconDts(names)
       },
     })
 

@@ -185,6 +185,8 @@ export function SvgoIconTransform(options: LoaderOptions) {
   })
 }
 
+// Copy from Nuxt
+// https://github.com/nuxt/nuxt/blob/main/packages/nuxt/src/core/utils/plugins.ts
 export function isVue(id: string, opts: { type?: Array<'template' | 'script' | 'style'> } = {}) {
   // Bare `.vue` file (in Vite)
   const { search } = parseURL(decodeURIComponent(pathToFileURL(id).href))

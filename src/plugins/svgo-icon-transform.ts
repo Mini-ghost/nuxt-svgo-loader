@@ -19,6 +19,9 @@ const TEMPLATE_RE = /<template>([\s\S]*)<\/template>/
 const SVGO_ICON_RE = /\b(?:svgo-icon|SvgoIcon)\b/g
 const SVGO_ICON_RESOLVE_RE = /(?<=[ (])_?resolveComponent\(\s*["'](SvgoIcon[^'"]*)["'][^)]*\)/g
 
+const DEFAULT_STRATEGY = 'component'
+const ALLOW_STRATEGIES = new Set(['component', 'skipsvgo'])
+
 export function SvgoIconTransform(options: LoaderOptions) {
   return createUnplugin(() => {
     const exclude = options.transform?.exclude || []
@@ -83,17 +86,23 @@ export function SvgoIconTransform(options: LoaderOptions) {
                 }
 
                 if (node.name !== 'SvgoIcon' && node.name !== 'svgo-icon') {
+                  // not a SvgoIcon component, skip
                   return
                 }
 
                 if (scopeTracker.getDeclaration(node.name)) {
+                  // already declared in the scope, skip
                   return
                 }
 
                 const name = node.attributes.name
-                const strategy = node.attributes.strategy || 'component'
                 const start = node.loc[0].start + offset
                 const end = node.loc.at(-1)!.end + offset
+
+                let strategy = node.attributes.strategy || DEFAULT_STRATEGY
+                if (!ALLOW_STRATEGIES.has(strategy)) {
+                  strategy = DEFAULT_STRATEGY
+                }
 
                 if (!name) {
                   // missing name

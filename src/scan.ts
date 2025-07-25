@@ -5,7 +5,7 @@ import { basename } from 'pathe'
 import { glob } from 'tinyglobby'
 
 export async function scanComponents(nuxt: Nuxt, resolve: Resolver['resolve']) {
-  const srcDir = nuxt.options.srcDir || nuxt.options.appDir
+  const srcDir = nuxt.options.srcDir
 
   const files = await glob(['**/*.svg'], {
     cwd: srcDir,

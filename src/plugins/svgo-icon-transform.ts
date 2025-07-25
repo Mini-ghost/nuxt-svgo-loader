@@ -155,17 +155,15 @@ export function SvgoIconTransform(options: LoaderOptions) {
 
         transform: {
           handler(code, id) {
-            if (!bucket.has(id)) {
+            const imports = bucket.get(id)
+            if (!imports) {
               return
             }
 
             const s = new MagicString(code)
-            const imports = bucket.get(id)
 
-            if (imports) {
-              s.prepend(`${imports}\n`)
-              s.replace(SVGO_ICON_RESOLVE_RE, (_, name) => `__${name}`)
-            }
+            s.prepend(`${imports}\n`)
+            s.replace(SVGO_ICON_RESOLVE_RE, (_, name) => `__${name}`)
 
             return {
               code: s.toString(),

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SvgFilesInfo } from '../../src/types'
+import type { SvgFilesInfo } from '../../../src/types'
 import { genImport, genSafeVariableName } from 'knitwork'
 import { join } from 'pathe'
 import { camelCase, pascalCase } from 'scule'

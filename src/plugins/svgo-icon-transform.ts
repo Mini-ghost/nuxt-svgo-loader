@@ -4,7 +4,7 @@ import { pathToFileURL } from 'node:url'
 import { genImport } from 'knitwork'
 import MagicString from 'magic-string'
 import { parseAndWalk, ScopeTracker } from 'oxc-walker'
-import { camelCase, pascalCase } from 'scule'
+import { pascalCase } from 'scule'
 import { parseQuery, parseURL } from 'ufo'
 import { parse, render, walk } from 'ultrahtml'
 import { createUnplugin } from 'unplugin'
@@ -110,7 +110,7 @@ export function SvgoIconTransform(options: LoaderOptions) {
                   return
                 }
 
-                const component = `SvgoIcon${pascalCase(strategy)}${pascalCase(camelCase(name))}`
+                const component = `SvgoIcon${pascalCase(strategy)}${pascalCase(name)}`
                 const file = lookup.get(`${name}.svg`)
 
                 if (!file) {

@@ -11,6 +11,7 @@ Nuxt module to load SVG files as Vue components, using SVGO for optimization.
 
 - 📁 Load SVG files as Vue components.
 - 🎨 Optimize SVGs using SVGO.
+- 🔧 Virtual `<SvgoIcon>` component for easy SVG usage.
 - 🛠️ Seamless integration with Nuxt DevTools.
 
 ## Installation
@@ -26,7 +27,7 @@ export default defineNuxtConfig({
   modules: ['nuxt-svgo-loader'],
   svgoLoader: {
     // Options here will be passed to `vite-svg-loader`
-  }
+  },
 })
 ```
 
@@ -35,7 +36,88 @@ export default defineNuxtConfig({
 
 ## Usage
 
-### Component
+### SvgoIcon Component
+
+The easiest way to use SVG icons is through the virtual `<SvgoIcon>` component. This component automatically resolves and imports SVG files at build time based on the `name` prop:
+
+```vue
+<template>
+  <div>
+    <!-- Automatically imports ~/your-svg-folder/nuxt.svg as a component -->
+    <SvgoIcon name="nuxt" width="92" height="92" fill="#00DC82" />
+    
+    <!-- Use strategy prop to modify SVG processing -->
+    <SvgoIcon name="vue" strategy="skipsvgo" />
+  </div>
+</template>
+```
+
+The `<SvgoIcon>` component:
+- Automatically transforms to the corresponding imported SVG component
+- Supports import strategies via the `strategy` prop (`component`, `skipsvgo`)
+- Provides type safety for available SVG names
+- Only works within Vue SFC `<template>` blocks
+
+The above template gets transformed at build time to:
+
+```vue
+<script setup lang="ts">
+import NuxtSvg from '~/your-svg-folder/nuxt.svg?component'
+import VueSvg from '~/your-svg-folder/vue.svg?skipsvgo'
+</script>
+
+<template>
+  <div>
+    <NuxtSvg width="92" height="92" fill="#00DC82" />
+    <VueSvg />
+  </div>
+</template>
+```
+
+#### Namespaces
+
+You can use namespaces to organize your SVG files. For example, if you have a folder structure like this:
+
+```
+assets/
+└── svg/
+    ├── nuxt.svg
+    └── vue.svg
+```
+
+In your `nuxt.config.ts`, add an item in `svgoLoader.namespaces`:
+
+```ts
+export default defineNuxtConfig({
+  modules: ['nuxt-svgo-loader'],
+  svgoLoader: {
+    namespaces: [
+      {
+        prefix: 'my-icon',
+        dir: './app/assets/svg',
+      },
+    ],
+  },
+})
+```
+
+Then you can use the icons like this:
+
+```vue
+<template>
+  <div>
+    <SvgoIcon name="my-icon:nuxt" width="92" height="92" fill="#00DC82" />
+    <SvgoIcon name="my-icon:vue" strategy="skipsvgo" />
+  </div>
+</template>
+```
+
+By default, `namespaces` is disabled. All SVG files under `app/` will be scanned. When `namespaces` is enabled, only the specified directories will be included.
+
+
+### Manual Import
+
+#### Component
 
 SVGs can be explicitly imported as Vue components using the `?component` suffix:
 
@@ -44,7 +126,7 @@ import NuxtSvg from '~/assets/svg/nuxt.svg'
 // <NuxtSvg />
 ```
 
-### URL
+#### URL
 
 SVGs can be imported as URLs using the `?url` suffix:
 
@@ -53,7 +135,7 @@ import nuxtSvgUrl from '~/assets/svg/nuxt.svg?url'
 // nuxtSvgUrl === '/_nuxt/assets/svg/nuxt.svg'
 ```
 
-### Raw
+#### Raw
 
 SVGs can be imported as raw strings using the `?raw` suffix:
 
@@ -62,7 +144,7 @@ import nuxtSvgRaw from '~/assets/svg/nuxt.svg?raw'
 // nuxtSvgRaw === '<svg xmlns="http://www.w3.org/2000/svg" ...'
 ```
 
-### Skip SVGO for a single file
+#### Skip SVGO for a single file
 
 SVGO can be explicitly disabled for one file by adding the `?skipsvgo` suffix:
 

@@ -6,10 +6,27 @@ import { devtools } from './devtools'
 import { SvgoIconTransform } from './plugins/svgo-icon-transform'
 import { scanComponents } from './scan'
 
+interface SvgLoaderNamespace {
+  /**
+   * The prefix to use for the SVG components in this namespace
+   */
+  prefix: string
+
+  /**
+   * The directory where the SVG files are located
+   */
+  dir: string
+}
+
 interface SvgLoaderOptions {
   svgoConfig?: Config
   svgo?: boolean
   defaultImport?: 'url' | 'raw' | 'component'
+
+  /**
+   * The namespaces to use for the SVG loader
+   */
+  namespaces?: SvgLoaderNamespace[]
 }
 
 const DTS = `declare module '*.svg?component' {
@@ -115,16 +132,12 @@ export default defineNuxtModule<SvgLoaderOptions>({
     })
 
     const context = {
-      components: [] as Awaited<ReturnType<typeof scanComponents>>,
-    }
-
-    function getComponents() {
-      return context.components
+      components: new Map<string, { name: string, path: string, prefix: string }>(),
     }
 
     addBuildPlugin(
       SvgoIconTransform({
-        getComponents,
+        getComponents: () => context.components,
         transform:
           typeof nuxt.options.components === 'object'
           && !Array.isArray(nuxt.options.components)
@@ -136,13 +149,29 @@ export default defineNuxtModule<SvgLoaderOptions>({
     addTemplate({
       filename: 'svgo-icon.d.ts',
       getContents: () => {
-        const names = getComponents().map(component => `'${component.name.replace('.svg', '')}'`)
+        const names = [...context.components.keys()].map(name => `'${name}'`)
+
+        if (names.length === 0) {
+          return generateSvgoIconDts(['string'])
+        }
+
         return generateSvgoIconDts(names)
       },
     })
 
     nuxt.hook('app:templates', async () => {
-      context.components = await scanComponents(nuxt)
+      const components = await scanComponents(nuxt, options.namespaces)
+
+      context.components.clear()
+
+      for (const component of components) {
+        let name = component.name
+        if (component.prefix) {
+          name = `${component.prefix}:${name}`
+        }
+
+        context.components.set(name, component)
+      }
     })
 
     nuxt.hook('prepare:types', ({ tsConfig }) => {

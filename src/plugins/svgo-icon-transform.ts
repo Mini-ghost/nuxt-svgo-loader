@@ -12,15 +12,15 @@ import { createUnplugin } from 'unplugin'
 interface Component {
   name: string
   path: string
+  prefix: string
 }
 interface LoaderOptions {
-  getComponents: () => Component[]
+  getComponents: () => Map<string, Component>
   transform?: ComponentsOptions['transform']
 }
 
 const SCRIPT_RE = /(?<=<script[^>]*>)[\s\S]*?(?=<\/script>)/gi
 const TEMPLATE_RE = /<template>([\s\S]*)<\/template>/
-const SVGO_ICON_RE = /\b(?:svgo-icon|SvgoIcon)\b/g
 const SVGO_ICON_RESOLVE_RE = /(?<=[ (])_?resolveComponent\(\s*["'](SvgoIcon[^'"]*)["'][^)]*\)/g
 
 const DEFAULT_STRATEGY = 'component'
@@ -53,11 +53,6 @@ export function SvgoIconTransform(options: LoaderOptions) {
           },
 
           async handler(code, id) {
-            // skip if the file does not include SvgoIcon or svgo-icon
-            if (!SVGO_ICON_RE.test(code)) {
-              return null
-            }
-
             const scopeTracker = new ScopeTracker({ preserveExitedScopes: true })
             for (const { 0: script } of code.matchAll(SCRIPT_RE)) {
               if (!script)
@@ -80,8 +75,7 @@ export function SvgoIconTransform(options: LoaderOptions) {
             const imports = new Set<string>()
 
             try {
-              const components = options.getComponents()
-              const lookup = new Map(components.map(c => [c.name, c]))
+              const lookup = options.getComponents()
 
               const ast = parse(template)
               await walk(ast, async (node) => {
@@ -114,15 +108,14 @@ export function SvgoIconTransform(options: LoaderOptions) {
                   return
                 }
 
-                const component = `SvgoIcon${pascalCase(strategy)}${pascalCase(name)}`
                 const file = lookup.get(name)
-
                 if (!file) {
                   // file not found
                   s.remove(start, end)
                   return
                 }
 
+                const component = `SvgoIcon${pascalCase(strategy)}${pascalCase(name.replace(':', '-'))}`
                 imports.add(genImport(`${file.path}?${strategy}`, `__${component}`))
 
                 const cloned = { ...node }

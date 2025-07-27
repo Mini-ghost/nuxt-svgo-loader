@@ -27,7 +27,7 @@ export default defineNuxtConfig({
   modules: ['nuxt-svgo-loader'],
   svgoLoader: {
     // Options here will be passed to `vite-svg-loader`
-  }
+  },
 })
 ```
 
@@ -58,8 +58,6 @@ The `<SvgoIcon>` component:
 - Provides type safety for available SVG names
 - Only works within Vue SFC `<template>` blocks
 
-#### Build-time Transformation
-
 The above template gets transformed at build time to:
 
 ```vue
@@ -75,6 +73,47 @@ import VueSvg from '~/your-svg-folder/vue.svg?skipsvgo'
   </div>
 </template>
 ```
+
+#### Namespaces
+
+You can use namespaces to organize your SVG files. For example, if you have a folder structure like this:
+
+```
+assets/
+└── svg/
+    ├── nuxt.svg
+    └── vue.svg
+```
+
+In your `nuxt.config.ts`, add an item in `svgoLoader.namespaces`:
+
+```ts
+export default defineNuxtConfig({
+  modules: ['nuxt-svgo-loader'],
+  svgoLoader: {
+    namespaces: [
+      {
+        prefix: 'my-icon',
+        dir: './app/assets/svg',
+      },
+    ],
+  },
+})
+```
+
+Then you can use the icons like this:
+
+```vue
+<template>
+  <div>
+    <SvgoIcon name="my-icon:nuxt" width="92" height="92" fill="#00DC82" />
+    <SvgoIcon name="my-icon:vue" strategy="skipsvgo" />
+  </div>
+</template>
+```
+
+By default, `namespaces` is disabled. All SVG files under `app/` will be scanned. When `namespaces` is enabled, only the specified directories will be included.
+
 
 ### Manual Import
 

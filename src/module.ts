@@ -142,7 +142,7 @@ export default defineNuxtModule<SvgLoaderOptions>({
     })
 
     nuxt.hook('app:templates', async () => {
-      context.components = await scanComponents(nuxt, resolve)
+      context.components = await scanComponents(nuxt)
     })
 
     nuxt.hook('prepare:types', ({ tsConfig }) => {

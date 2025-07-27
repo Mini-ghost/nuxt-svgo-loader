@@ -9,8 +9,12 @@ import { parseQuery, parseURL } from 'ufo'
 import { parse, render, walk } from 'ultrahtml'
 import { createUnplugin } from 'unplugin'
 
+interface Component {
+  name: string
+  path: string
+}
 interface LoaderOptions {
-  getComponents: () => { path: string, filePath: string, name: string }[]
+  getComponents: () => Component[]
   transform?: ComponentsOptions['transform']
 }
 
@@ -111,7 +115,7 @@ export function SvgoIconTransform(options: LoaderOptions) {
                 }
 
                 const component = `SvgoIcon${pascalCase(strategy)}${pascalCase(name)}`
-                const file = lookup.get(`${name}.svg`)
+                const file = lookup.get(name)
 
                 if (!file) {
                   // file not found
@@ -119,7 +123,7 @@ export function SvgoIconTransform(options: LoaderOptions) {
                   return
                 }
 
-                imports.add(genImport(`${file.filePath}?${strategy}`, `__${component}`))
+                imports.add(genImport(`${file.path}?${strategy}`, `__${component}`))
 
                 const cloned = { ...node }
                 cloned.name = component

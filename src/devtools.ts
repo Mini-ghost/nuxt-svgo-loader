@@ -113,7 +113,8 @@ export function devtools(nuxt: Nuxt, resolve: Resolver['resolve']): void {
       const files = await glob(['**/*.svg'], {
         cwd: srcDir,
         onlyFiles: true,
-        ignore: ['**/node_modules/**', '**/dist/**'],
+        ignore: ['node_modules', 'dist', 'build', 'coverage', 'test', 'tests'],
+        expandDirectories: false,
       })
 
       cache = await Promise.all(

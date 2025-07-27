@@ -82,6 +82,7 @@ export function devtools(nuxt: Nuxt, resolve: Resolver['resolve']): void {
     tabs.push({
       title: 'Nuxt SVG Loader',
       name: 'nuxt-svgo-loader',
+      icon: 'carbon:svg',
       view: {
         type: 'iframe',
         src: DEVTOOLS_CLIENT_PATH,

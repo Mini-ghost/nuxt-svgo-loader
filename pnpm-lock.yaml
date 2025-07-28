@@ -17,6 +17,9 @@ importers:
       birpc:
         specifier: ^2.5.0
         version: 2.5.0
+      oxc-walker:
+        specifier: ^0.4.0
+        version: 0.4.0(oxc-parser@0.77.3)
       pathe:
         specifier: ^2.0.3
         version: 2.0.3
@@ -35,6 +38,9 @@ importers:
       tinyglobby:
         specifier: ^0.2.14
         version: 0.2.14
+      ultrahtml:
+        specifier: ^1.6.0
+        version: 1.6.0
       vite-svg-loader:
         specifier: ^5.1.0
         version: 5.1.0(vue@3.5.18(typescript@5.8.3))
@@ -72,18 +78,12 @@ importers:
       nuxt:
         specifier: ^4.0.1
         version: 4.0.1(@netlify/blobs@9.1.2)(@parcel/watcher@2.5.1)(@types/node@22.13.10)(@vue/compiler-sfc@3.5.18)(db0@0.3.2)(eslint@9.31.0(jiti@2.5.0))(ioredis@5.6.1)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.45.1)(terser@5.39.0)(tsx@4.20.3)(typescript@5.8.3)(vite@7.0.6(@types/node@22.13.10)(jiti@2.5.0)(terser@5.39.0)(tsx@4.20.3)(yaml@2.8.0))(yaml@2.8.0)
-      oxc-walker:
-        specifier: ^0.4.0
-        version: 0.4.0(oxc-parser@0.77.3)
       tsx:
         specifier: ^4.20.3
         version: 4.20.3
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
-      ultrahtml:
-        specifier: ^1.6.0
-        version: 1.6.0
 
   client:
     devDependencies:
@@ -6060,7 +6060,7 @@ snapshots:
 
   '@es-joy/jsdoccomment@0.50.2':
     dependencies:
-      '@types/estree': 1.0.6
+      '@types/estree': 1.0.8
       '@typescript-eslint/types': 8.26.0
       comment-parser: 1.4.1
       esquery: 1.6.0

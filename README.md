@@ -11,7 +11,7 @@ Nuxt module to load SVG files as Vue components, using SVGO for optimization.
 
 - 📁 Load SVG files as Vue components.
 - 🎨 Optimize SVGs using SVGO.
-- 🔧 Virtual `<SvgoIcon>` component for easy SVG usage.
+- 🔧 Macro `<SvgoIcon>` component for easy SVG usage.
 - 🛠️ Seamless integration with Nuxt DevTools.
 
 ## Installation
@@ -38,7 +38,7 @@ export default defineNuxtConfig({
 
 ### SvgoIcon Component
 
-The easiest way to use SVG icons is through the virtual `<SvgoIcon>` component. This component automatically resolves and imports SVG files at build time based on the `name` prop:
+The easiest way to use SVG icons is through the macro `<SvgoIcon>` component. This component automatically resolves and imports SVG files at build time based on the `name` prop:
 
 ```vue
 <template>

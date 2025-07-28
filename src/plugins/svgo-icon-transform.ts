@@ -135,7 +135,7 @@ export function SvgoIconTransform(options: LoaderOptions) {
             }
 
             if (imports.size) {
-              bucket.set(id, [...imports].join('\n'))
+              bucket.set(withoutQuery(id), [...imports].join('\n'))
             }
 
             if (s.hasChanged()) {
@@ -161,7 +161,7 @@ export function SvgoIconTransform(options: LoaderOptions) {
 
         transform: {
           handler(code, id) {
-            const imports = bucket.get(id)
+            const imports = bucket.get(withoutQuery(id))
             if (!imports) {
               return
             }
@@ -215,4 +215,9 @@ export function isVue(id: string, opts: { type?: Array<'template' | 'script' | '
 
   // Query `?vue&type=template` (in Webpack or external template)
   return true
+}
+
+function withoutQuery(input: string) {
+  const { pathname } = parseURL(input)
+  return pathname
 }

@@ -44,7 +44,7 @@ export function SvgoIconTransform(options: LoaderOptions) {
           if (include.some(pattern => pattern.test(id))) {
             return true
           }
-          return isVue(id)
+          return isVue(id, { type: ['template', 'script'] })
         },
 
         transform: {
@@ -156,7 +156,7 @@ export function SvgoIconTransform(options: LoaderOptions) {
           if (include.some(pattern => pattern.test(id))) {
             return true
           }
-          return isVue(id)
+          return isVue(id, { type: ['template', 'script'] })
         },
 
         transform: {
